@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT Token — Code Specter</title>
+    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000001.png">
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .tab-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 12px;
+            padding: 12px;
+            color: var(--text-muted);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .3s;
+            font-family: inherit;
+            font-size: .9rem
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(108, 92, 231, .3), rgba(0, 206, 201, .15));
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 20px var(--primary-glow)
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn .4s ease
+        }
+
+        .tab-content.active {
+            display: block
+        }
+
+        .result-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 18px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn .4s ease
+        }
+
+        .result-card.show {
+            display: block
+        }
+
+        .json-output {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .82rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: var(--text);
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, .3);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, .05)
+        }
+
+        .copy-btn {
+            margin-top: 12px;
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .15);
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+            font-size: .85rem
+        }
+
+        .copy-btn:hover {
+            background: rgba(108, 92, 231, .2);
+            border-color: var(--primary)
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-globes">
+        <div class="globe globe-1"></div>
+        <div class="globe globe-2"></div>
+        <div class="globe globe-3"></div>
+    </div>
+    <div class="app-container">
+        <header>
+            <a class="logo" href="/">
+                <div class="logo-icon"><i class="fa-solid fa-bolt" style="color:#fff;"></i></div>
+                <div class="logo-text"><strong>Code Specter</strong><span>FREE FIRE HACKS</span></div>
+            </a>
+            <div style="display:flex;align-items:center;gap:15px;">
+                <a href="/" class="header-badge"
+                    style="text-decoration:none;background:rgba(108,92,231,.15);border-color:var(--primary);color:#a29bfe;">
+                    <i class="fa-solid fa-house" style="font-size:.7rem;"></i> Home
+                </a>
+                <div class="header-badge">
+                    <div class="dot"></div>Online
+                </div>
+            </div>
+        </header>
+
+        <h2><i class="fa-solid fa-key" style="color:#fdcb6e;margin-right:10px;"></i>JWT Token</h2>
+
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchTab('gen')"><i class="fa-solid fa-plus"></i> Generate</button>
+            <button class="tab-btn" onclick="switchTab('dec')"><i class="fa-solid fa-unlock"></i> Decode</button>
+        </div>
+
+        <!-- Generate Tab -->
+        <div class="tab-content active" id="tab-gen">
+            <div class="form-group">
+                <label>Garena UID</label>
+                <input type="text" id="jwt-uid" placeholder="Enter Garena UID">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="jwt-pass" placeholder="Enter Password">
+            </div>
+            <button class="action-btn" id="jwt-gen-btn" onclick="doJwtGen()">
+                Generate Token <i class="fa-solid fa-key"></i>
+            </button>
+            <div class="status-bar" id="jwt-gen-status">
+                <div class="spinner"></div>
+                <div class="status-dot"></div>
+                <span class="status-text">Ready to generate</span>
+            </div>
+            <div class="result-card" id="jwt-gen-result"></div>
+        </div>
+
+        <!-- Decode Tab -->
+        <div class="tab-content" id="tab-dec">
+            <div class="form-group">
+                <label>JWT Token</label>
+                <textarea id="jwt-token" placeholder="Paste JWT token here..."
+                    style="width:100%;min-height:100px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:var(--text);padding:14px;font-family:'JetBrains Mono',monospace;font-size:.85rem;resize:vertical;"></textarea>
+            </div>
+            <button class="action-btn" id="jwt-dec-btn" onclick="doJwtDec()">
+                Decode Token <i class="fa-solid fa-unlock"></i>
+            </button>
+            <div class="status-bar" id="jwt-dec-status">
+                <div class="spinner"></div>
+                <div class="status-dot"></div>
+                <span class="status-text">Ready to decode</span>
+            </div>
+            <div class="result-card" id="jwt-dec-result"></div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 All rights reserved <a href="https://www.codespecters.com/" target="_blank"
+                    class="footer-link">CODE SPECTER</a></p>
+        </footer>
+    </div>
+    <div id="notification-area"></div>
+    <script src="config.js"></script>
+    <script>
+        function setStatus(id, msg, type = 'loading') {
+            const bar = document.getElementById(id);
+            if (!bar) return;
+            bar.className = `status-bar active ${type}`;
+            bar.querySelector('.status-text').textContent = msg;
+            const spinner = bar.querySelector('.spinner');
+            if (spinner) spinner.style.display = (type === 'loading') ? 'block' : 'none';
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll(".tab-btn").forEach((b, i) => b.classList.toggle("active", (tab === "gen" ? i === 0 : i === 1)));
+            document.getElementById("tab-gen").classList.toggle("active", tab === "gen");
+            document.getElementById("tab-dec").classList.toggle("active", tab === "dec");
+        }
+
+        async function doJwtGen() {
+            const uid = document.getElementById("jwt-uid").value.trim();
+            const pass = document.getElementById("jwt-pass").value.trim();
+            if (!uid) {
+                showNotification("Please enter a Garena UID", "error");
+                document.getElementById("jwt-uid").focus();
+                return;
+            }
+            if (!pass) {
+                showNotification("Please enter your Password", "error");
+                document.getElementById("jwt-pass").focus();
+                return;
+            }
+            const btn = document.getElementById("jwt-gen-btn");
+            const result = document.getElementById("jwt-gen-result");
+            btn.classList.add("loading"); btn.disabled = true;
+            setStatus("jwt-gen-status", "Connecting to auth server...", "loading");
+            result.className = "result-card"; result.innerHTML = "";
+            try {
+                const resp = await fetch(`${API_BASE}/jwt/token?uid=${encodeURIComponent(uid)}&password=${encodeURIComponent(pass)}&key=${API_KEY}`);
+                if (!resp.ok) {
+                    const errorData = await resp.json();
+                    throw new Error(errorData.detail?.message || "Authentication failed. Please check credentials.");
+                }
+                const d = await resp.json();
+                const text = JSON.stringify(d, null, 2);
+                result.innerHTML = `<div class="json-output">${escHtml(text)}</div><button class="copy-btn" onclick="navigator.clipboard.writeText(\`${text.replace(/`/g, "\\`").replace(/\\/g, "\\\\")}\`);showNotification('Copied!','success')"><i class="fa-solid fa-copy"></i> Copy JSON</button>`;
+                result.className = "result-card show";
+                setStatus("jwt-gen-status", "Token generated successfully!", "success");
+                showNotification("Token generated!", "success");
+            } catch (e) {
+                setStatus("jwt-gen-status", "Error: " + e.message, "error");
+                showNotification(e.message || "Generation failed", "error");
+            }
+            finally {
+                btn.classList.remove("loading"); btn.disabled = false;
+                const bar = document.getElementById("jwt-gen-status");
+                if (bar.classList.contains("loading")) setStatus("jwt-gen-status", "Ready to generate", "info");
+            }
+        }
+
+        async function doJwtDec() {
+            const token = document.getElementById("jwt-token").value.trim();
+            if (!token) return showNotification("Paste a JWT token", "error");
+            const btn = document.getElementById("jwt-dec-btn");
+            const result = document.getElementById("jwt-dec-result");
+            btn.classList.add("loading"); btn.disabled = true;
+            setStatus("jwt-dec-status", "Decoding token payload...", "loading");
+            result.className = "result-card"; result.innerHTML = "";
+            try {
+                const resp = await fetch(`${API_BASE}/jwt/decode?token=${encodeURIComponent(token)}&key=${API_KEY}`);
+                if (!resp.ok) throw new Error("Invalid or expired token. Could not decode.");
+                const d = await resp.json();
+                const text = JSON.stringify(d, null, 2);
+                result.innerHTML = `<div class="json-output">${escHtml(text)}</div>`;
+                result.className = "result-card show";
+                setStatus("jwt-dec-status", "Token decoded successfully!", "success");
+                showNotification("Token decoded!", "success");
+            } catch (e) {
+                setStatus("jwt-dec-status", "Error: " + e.message, "error");
+                showNotification(e.message || "Decoding failed", "error");
+            }
+            finally {
+                btn.classList.remove("loading"); btn.disabled = false;
+                const bar = document.getElementById("jwt-dec-status");
+                if (bar.classList.contains("loading")) setStatus("jwt-dec-status", "Ready to decode", "info");
+            }
+        }
+
+        document.getElementById("jwt-uid").addEventListener("keydown", e => { if (e.key === "Enter") doJwtGen(); });
+        document.getElementById("jwt-pass").addEventListener("keydown", e => { if (e.key === "Enter") doJwtGen(); });
+        document.getElementById("jwt-token").addEventListener("keydown", e => { if (e.key === "Enter") doJwtDec(); });
+
+        function escHtml(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+        function showNotification(msg, type = "info") {
+            const area = document.getElementById("notification-area");
+            const n = document.createElement("div"); n.className = `notification ${type}`; n.textContent = msg;
+            area.appendChild(n); setTimeout(() => { n.style.opacity = "0"; setTimeout(() => n.remove(), 400); }, 3000);
+        }
+    </script>
+</body>
+
+</html>

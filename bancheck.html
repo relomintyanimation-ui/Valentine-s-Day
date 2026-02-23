@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ban Check — Code Specter</title>
+    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000001.png">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .result-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 18px;
+            padding: 24px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn .4s ease
+        }
+
+        .result-card.show {
+            display: block
+        }
+
+        .result-card.banned {
+            border-color: rgba(214, 48, 49, .5);
+            box-shadow: 0 0 30px rgba(214, 48, 49, .15)
+        }
+
+        .result-card.safe {
+            border-color: rgba(0, 184, 148, .5);
+            box-shadow: 0 0 30px rgba(0, 184, 148, .15)
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .05)
+        }
+
+        .result-row:last-child {
+            border: none
+        }
+
+        .result-key {
+            color: var(--text-muted);
+            font-size: .9rem
+        }
+
+        .result-val {
+            font-weight: 700;
+            font-size: .9rem
+        }
+
+        .result-val.banned-text {
+            color: #d63031
+        }
+
+        .result-val.safe-text {
+            color: #00b894
+        }
+
+        .status-icon {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 15px
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-globes">
+        <div class="globe globe-1"></div>
+        <div class="globe globe-2"></div>
+        <div class="globe globe-3"></div>
+    </div>
+    <div class="app-container">
+        <header>
+            <a class="logo" href="/">
+                <div class="logo-icon"><i class="fa-solid fa-bolt" style="color:#fff;"></i></div>
+                <div class="logo-text"><strong>Code Specter</strong><span>FREE FIRE HACKS</span></div>
+            </a>
+            <div style="display:flex;align-items:center;gap:15px;">
+                <a href="/" class="header-badge"
+                    style="text-decoration:none;background:rgba(108,92,231,.15);border-color:var(--primary);color:#a29bfe;">
+                    <i class="fa-solid fa-house" style="font-size:.7rem;"></i> Home
+                </a>
+                <div class="header-badge">
+                    <div class="dot"></div>Online
+                </div>
+            </div>
+        </header>
+
+        <h2><i class="fa-solid fa-ban" style="color:#00cec9;margin-right:10px;"></i>Ban Check</h2>
+
+        <div class="form-group">
+            <label>Player UID</label>
+            <input type="number" id="bc-uid" placeholder="Enter Free Fire UID">
+        </div>
+
+        <button class="action-btn" id="bc-btn" onclick="doBanCheck()">
+            Check Ban Status <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+
+        <div class="status-bar" id="bc-status">
+            <div class="spinner"></div>
+            <div class="status-dot"></div>
+            <span class="status-text">Ready to check</span>
+        </div>
+
+        <div class="result-card" id="bc-result"></div>
+
+        <footer>
+            <p>&copy; 2026 All rights reserved <a href="https://www.codespecters.com/" target="_blank"
+                    class="footer-link">CODE SPECTER</a></p>
+        </footer>
+    </div>
+
+    <div id="notification-area"></div>
+
+    <script src="config.js"></script>
+    <script>
+        function setStatus(msg, type = 'loading') {
+            const bar = document.getElementById("bc-status");
+            if (!bar) return;
+            bar.className = `status-bar active ${type}`;
+            bar.querySelector('.status-text').textContent = msg;
+            const spinner = bar.querySelector('.spinner');
+            if (spinner) spinner.style.display = (type === 'loading') ? 'block' : 'none';
+        }
+
+        async function doBanCheck() {
+            const uid = document.getElementById("bc-uid").value.trim();
+            if (!uid) {
+                showNotification("Please enter a Player UID", "error");
+                document.getElementById("bc-uid").focus();
+                return;
+            }
+            const btn = document.getElementById("bc-btn");
+            const result = document.getElementById("bc-result");
+            btn.classList.add("loading"); btn.disabled = true;
+            setStatus("Querying official ban records...", "loading");
+            result.className = "result-card"; result.innerHTML = "";
+            try {
+                const resp = await fetch(`${API_BASE}/bancheck/check?uid=${uid}&key=${API_KEY}`);
+                if (!resp.ok) {
+                    const err = await resp.json();
+                    throw new Error(err.detail?.message || "FF API is currently unreachable.");
+                }
+                const d = await resp.json();
+                const banned = d.is_banned;
+                result.className = `result-card show ${banned ? "banned" : "safe"}`;
+
+                let lastLoginStr = "—";
+                if (d.last_login) {
+                    lastLoginStr = new Date(parseInt(d.last_login) * 1000).toLocaleString();
+                }
+
+                result.innerHTML = `
+                    <div class="status-icon">${banned ? "🚫" : "✅"}</div>
+                    <div class="result-row"><span class="result-key">Nickname</span><span class="result-val">${d.name || "—"}</span></div>
+                    <div class="result-row"><span class="result-key">UID</span><span class="result-val">${d.uid}</span></div>
+                    <div class="result-row"><span class="result-key">Level</span><span class="result-val">${d.level || "—"}</span></div>
+                    <div class="result-row"><span class="result-key">Status</span><span class="result-val ${banned ? "banned-text" : "safe-text"}">${d.status}</span></div>
+                    <div class="result-row"><span class="result-key">Last Login</span><span class="result-val">${lastLoginStr}</span></div>
+                    ${banned ? `<div class="result-row"><span class="result-key">Ban Period</span><span class="result-val banned-text">${d.ban_period} days</span></div>` : ""}
+                `;
+                setStatus(banned ? "Warning: Account data restricted." : "Account verified as safe.", banned ? "error" : "success");
+                showNotification(banned ? "Account is BANNED" : "Account is SAFE", banned ? "error" : "success");
+            } catch (e) {
+                setStatus("Check failed: " + e.message, "error");
+                showNotification(e.message || "Verification failed", "error");
+            } finally {
+                btn.classList.remove("loading"); btn.disabled = false;
+                const bar = document.getElementById("bc-status");
+                if (bar.classList.contains("loading")) setStatus("Ready to check", "info");
+            }
+        }
+
+        document.getElementById("bc-uid").addEventListener("keydown", e => { if (e.key === "Enter") doBanCheck(); });
+
+        function showNotification(msg, type = "info") {
+            const area = document.getElementById("notification-area");
+            const n = document.createElement("div");
+            n.className = `notification ${type}`;
+            n.textContent = msg;
+            area.appendChild(n);
+            setTimeout(() => { n.style.opacity = "0"; setTimeout(() => n.remove(), 400); }, 3000);
+        }
+    </script>
+</body>
+
+</html>

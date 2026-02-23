@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio Update — Code Specter</title>
+    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000001.png">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            background: rgba(0, 0, 0, .4);
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 12px;
+            color: var(--text);
+            padding: 14px;
+            font-family: inherit;
+            font-size: .9rem;
+            resize: vertical
+        }
+
+        textarea:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(0, 206, 201, .15)
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: .8rem;
+            color: var(--text-muted);
+            margin-top: 5px
+        }
+
+        .result-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 18px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn .4s ease
+        }
+
+        .result-card.show {
+            display: block
+        }
+
+        .result-card.success {
+            border-color: rgba(0, 184, 148, .5);
+            box-shadow: 0 0 30px rgba(0, 184, 148, .15)
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .05)
+        }
+
+        .result-row:last-child {
+            border: none
+        }
+
+        .result-key {
+            color: var(--text-muted);
+            font-size: .9rem
+        }
+
+        .result-val {
+            font-weight: 700;
+            font-size: .9rem
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-globes">
+        <div class="globe globe-1"></div>
+        <div class="globe globe-2"></div>
+        <div class="globe globe-3"></div>
+    </div>
+    <div class="app-container">
+        <header>
+            <a class="logo" href="/">
+                <div class="logo-icon"><i class="fa-solid fa-bolt" style="color:#fff;"></i></div>
+                <div class="logo-text"><strong>Code Specter</strong><span>FREE FIRE HACKS</span></div>
+            </a>
+            <div style="display:flex;align-items:center;gap:15px;">
+                <a href="/" class="header-badge"
+                    style="text-decoration:none;background:rgba(108,92,231,.15);border-color:var(--primary);color:#a29bfe;">
+                    <i class="fa-solid fa-house" style="font-size:.7rem;"></i> Home
+                </a>
+                <div class="header-badge">
+                    <div class="dot"></div>Online
+                </div>
+            </div>
+        </header>
+
+        <h2><i class="fa-solid fa-pen-to-square" style="color:#a29bfe;margin-right:10px;"></i>Bio Update</h2>
+
+        <div class="form-group">
+            <label>JWT Token</label>
+            <input type="text" id="bio-token" placeholder="Paste your JWT token">
+        </div>
+
+        <div class="form-group">
+            <label>Region</label>
+            <div class="select-group">
+                <button class="region-btn" onclick="selectRegion(this,'ind')" data-value="ind">IND</button>
+                <button class="region-btn" onclick="selectRegion(this,'bd')" data-value="bd">BD</button>
+                <button class="region-btn" onclick="selectRegion(this,'sg')" data-value="sg">SG</button>
+                <button class="region-btn" onclick="selectRegion(this,'br')" data-value="br">BR</button>
+                <button class="region-btn" onclick="selectRegion(this,'na')" data-value="na">NA</button>
+                <button class="region-btn" onclick="selectRegion(this,'us')" data-value="us">US</button>
+                <button class="region-btn" onclick="selectRegion(this,'pk')" data-value="pk">PK</button>
+                <button class="region-btn" onclick="selectRegion(this,'sa')" data-value="sa">SA</button>
+                <button class="region-btn" onclick="selectRegion(this,'mea')" data-value="mea">MEA</button>
+                <button class="region-btn" onclick="selectRegion(this,'europe')" data-value="europe">EU</button>
+                <button class="region-btn" onclick="selectRegion(this,'id')" data-value="id">ID</button>
+            </div>
+            <input type="hidden" id="bio-region" value="">
+        </div>
+
+        <div class="form-group">
+            <label>Bio Text</label>
+            <textarea id="bio-text" placeholder="Enter your new bio text..." maxlength="256"
+                oninput="updateCounter()"></textarea>
+            <div class="char-counter" id="bio-chars">0 / 256</div>
+        </div>
+
+        <button class="action-btn" id="bio-btn" onclick="doBioUpdate()">
+            Update Bio <i class="fa-solid fa-paper-plane"></i>
+        </button>
+
+        <div class="status-bar" id="bio-status">
+            <div class="spinner"></div>
+            <div class="status-dot"></div>
+            <span class="status-text">Ready to update</span>
+        </div>
+
+        <div class="result-card" id="bio-result"></div>
+
+        <footer>
+            <p>&copy; 2026 All rights reserved <a href="https://www.codespecters.com/" target="_blank"
+                    class="footer-link">CODE SPECTER</a></p>
+        </footer>
+    </div>
+    <div id="notification-area"></div>
+    <script src="config.js"></script>
+    <script>
+        function setStatus(msg, type = 'loading') {
+            const bar = document.getElementById("bio-status");
+            if (!bar) return;
+            bar.className = `status-bar active ${type}`;
+            bar.querySelector('.status-text').textContent = msg;
+            const spinner = bar.querySelector('.spinner');
+            if (spinner) spinner.style.display = (type === 'loading') ? 'block' : 'none';
+        }
+
+        let selectedRegion = "";
+
+        function selectRegion(btn, val) {
+            btn.closest(".select-group").querySelectorAll(".region-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            selectedRegion = val;
+            document.getElementById("bio-region").value = val;
+        }
+
+        function updateCounter() {
+            document.getElementById("bio-chars").textContent = document.getElementById("bio-text").value.length + " / 256";
+        }
+
+        async function doBioUpdate() {
+            const token = document.getElementById("bio-token").value.trim();
+            const bio = document.getElementById("bio-text").value.trim();
+            const region = selectedRegion;
+            if (!token) {
+                showNotification("Please paste your JWT Token", "error");
+                document.getElementById("bio-token").focus();
+                return;
+            }
+            if (!bio) {
+                showNotification("Please enter a Bio text", "error");
+                document.getElementById("bio-text").focus();
+                return;
+            }
+            if (!region) {
+                showNotification("Please select a Region first", "error");
+                return;
+            }
+            const btn = document.getElementById("bio-btn");
+            const result = document.getElementById("bio-result");
+            btn.classList.add("loading"); btn.disabled = true;
+            setStatus("Sending request to Garena server...", "loading");
+            result.className = "result-card"; result.innerHTML = "";
+            try {
+                const resp = await fetch(`${API_BASE}/bio/update?token=${encodeURIComponent(token)}&bio=${encodeURIComponent(bio)}&region=${region}&key=${API_KEY}`);
+                if (!resp.ok) {
+                    const error = await resp.json();
+                    throw new Error(error.detail?.message || "FF Internal Server Error. Token may be invalid.");
+                }
+                const d = await resp.json();
+                result.innerHTML = `
+                    <div style="text-align:center;font-size:2rem;margin-bottom:15px;">✅</div>
+                    <div class="result-row"><span class="result-key">Bio Submitted</span><span class="result-val">${d.bio_submitted || bio}</span></div>
+                    <div class="result-row"><span class="result-key">Server</span><span class="result-val">${d.server || "—"}</span></div>
+                    <div class="result-row"><span class="result-key">Status</span><span class="result-val">${d.status_code || "OK"}</span></div>
+                `;
+                result.className = "result-card show success";
+                setStatus("Bio successfully synchronized with game servers.", "success");
+                showNotification("Bio updated successfully!", "success");
+            } catch (e) {
+                setStatus("Update failed: " + e.message, "error");
+                showNotification(e.message || "Update failed", "error");
+            }
+            finally {
+                btn.classList.remove("loading"); btn.disabled = false;
+                const bar = document.getElementById("bio-status");
+                if (bar.classList.contains("loading")) setStatus("Ready to update", "info");
+            }
+        }
+
+        function showNotification(msg, type = "info") {
+            const area = document.getElementById("notification-area");
+            const n = document.createElement("div"); n.className = `notification ${type}`; n.textContent = msg;
+            area.appendChild(n); setTimeout(() => { n.style.opacity = "0"; setTimeout(() => n.remove(), 400); }, 3000);
+        }
+    </script>
+</body>
+
+</html>

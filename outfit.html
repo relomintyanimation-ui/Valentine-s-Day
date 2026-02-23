@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outfit Image — Code Specter</title>
+    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000001.png">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .image-preview {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 18px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+            animation: fadeIn .4s ease
+        }
+
+        .image-preview.show {
+            display: block
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .4)
+        }
+
+        .download-btn {
+            margin-top: 15px;
+            background: linear-gradient(90deg, var(--secondary), #00b894);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: .9rem;
+            transition: transform .2s, box-shadow .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 206, 201, .4)
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-globes">
+        <div class="globe globe-1"></div>
+        <div class="globe globe-2"></div>
+        <div class="globe globe-3"></div>
+    </div>
+    <div class="app-container">
+        <header>
+            <a class="logo" href="/">
+                <div class="logo-icon"><i class="fa-solid fa-bolt" style="color:#fff;"></i></div>
+                <div class="logo-text"><strong>Code Specter</strong><span>FREE FIRE HACKS</span></div>
+            </a>
+            <div style="display:flex;align-items:center;gap:15px;">
+                <a href="/" class="header-badge"
+                    style="text-decoration:none;background:rgba(108,92,231,.15);border-color:var(--primary);color:#a29bfe;">
+                    <i class="fa-solid fa-house" style="font-size:.7rem;"></i> Home
+                </a>
+                <div class="header-badge">
+                    <div class="dot"></div>Online
+                </div>
+            </div>
+        </header>
+
+        <h2><i class="fa-solid fa-shirt" style="color:#00cec9;margin-right:10px;"></i>Outfit Image</h2>
+
+        <div class="form-group">
+            <label>Player UID</label>
+            <input type="number" id="of-uid" placeholder="Enter Free Fire UID">
+        </div>
+
+        <button class="action-btn" id="of-btn" onclick="doOutfit()">
+            Generate Outfit Card <i class="fa-solid fa-shirt"></i>
+        </button>
+
+        <div class="status-bar" id="of-status">
+            <div class="spinner"></div>
+            <div class="status-dot"></div>
+            <span class="status-text">Ready to generate</span>
+        </div>
+
+        <div class="image-preview" id="of-preview"></div>
+
+        <footer>
+            <p>&copy; 2026 All rights reserved <a href="https://www.codespecters.com/" target="_blank"
+                    class="footer-link">CODE SPECTER</a></p>
+        </footer>
+    </div>
+    <div id="notification-area"></div>
+    <script src="config.js"></script>
+    <script>
+        function setStatus(msg, type = 'loading') {
+            const bar = document.getElementById("of-status");
+            if (!bar) return;
+            bar.className = `status-bar active ${type}`;
+            bar.querySelector('.status-text').textContent = msg;
+            const spinner = bar.querySelector('.spinner');
+            if (spinner) spinner.style.display = (type === 'loading') ? 'block' : 'none';
+        }
+
+        async function doOutfit() {
+            const uid = document.getElementById("of-uid").value.trim();
+            if (!uid) {
+                showNotification("Please enter a Player UID", "error");
+                document.getElementById("of-uid").focus();
+                return;
+            }
+            const btn = document.getElementById("of-btn");
+            const preview = document.getElementById("of-preview");
+            btn.classList.add("loading"); btn.disabled = true;
+            setStatus("Extracting wardrobe data...", "loading");
+            preview.className = "image-preview"; preview.innerHTML = "";
+            try {
+                const resp = await fetch(`${API_BASE}/outfit/image?uid=${uid}&key=${API_KEY}`);
+                if (!resp.ok) throw new Error("Card generation failed. Server returned HTTP " + resp.status);
+                const blob = await resp.blob();
+                const url = URL.createObjectURL(blob);
+                preview.innerHTML = `<img src="${url}" alt="Outfit Card"><br><a class="download-btn" href="${url}" download="outfit_${uid}.png"><i class="fa-solid fa-download"></i> Download Card</a>`;
+                preview.className = "image-preview show";
+                setStatus("Outfit card rendered successfully!", "success");
+                showNotification("Outfit card generated!", "success");
+            } catch (e) {
+                setStatus("Error: " + e.message, "error");
+                showNotification(e.message || "Failed to generate card", "error");
+            }
+            finally {
+                btn.classList.remove("loading"); btn.disabled = false;
+                const bar = document.getElementById("of-status");
+                if (bar.classList.contains("loading")) setStatus("Ready to generate", "info");
+            }
+        }
+
+        document.getElementById("of-uid").addEventListener("keydown", e => { if (e.key === "Enter") doOutfit(); });
+
+        function showNotification(msg, type = "info") {
+            const area = document.getElementById("notification-area");
+            const n = document.createElement("div"); n.className = `notification ${type}`; n.textContent = msg;
+            area.appendChild(n); setTimeout(() => { n.style.opacity = "0"; setTimeout(() => n.remove(), 400); }, 3000);
+        }
+    </script>
+</body>
+
+</html>

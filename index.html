@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Code Specter — Premium Free Fire tools. TCP Emote controller, bot management, and more.">
+    <meta property="og:title" content="Code Specter — FREE FIRE HACKS">
+    <meta property="og:description" content="Premium Free Fire tools by Code Specter.">
+    <meta property="og:image" content="https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000001.png">
+    <title>Code Specter — FREE FIRE HACKS</title>
+    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/ShahGCreator/icon@main/PNG/909000001.png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-glow: rgba(108, 92, 231, 0.45);
+            --secondary: #00cec9;
+            --secondary-glow: rgba(0, 206, 201, 0.35);
+            --accent: #e056fd;
+            --dark-bg: #0a0a10;
+            --card-bg: rgba(20, 20, 32, 0.75);
+            --text: #dfe6e9;
+            --text-muted: #8a9bb0;
+            --border: 1px solid rgba(255, 255, 255, 0.08);
+            --success: #00b894;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ── Animated Background ── */
+        .bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.55;
+            animation: orbFloat 12s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 420px;
+            height: 420px;
+            background: var(--primary);
+            top: -120px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--secondary);
+            bottom: -150px;
+            right: -120px;
+            animation-delay: 3s;
+        }
+
+        .orb-3 {
+            width: 280px;
+            height: 280px;
+            background: var(--accent);
+            top: 45%;
+            left: 55%;
+            opacity: 0.25;
+            animation-delay: 6s;
+        }
+
+        @keyframes orbFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(30px) scale(1.08);
+            }
+        }
+
+        /* Subtle grid overlay */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+
+        /* ── Page Wrapper ── */
+        .page {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1100px;
+            padding: 0 24px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 28px 0 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            animation: fadeInDown 0.7s ease both;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 0 20px var(--primary-glow);
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px var(--primary-glow);
+            }
+
+            50% {
+                box-shadow: 0 0 35px var(--primary-glow), 0 0 60px rgba(224, 86, 253, 0.2);
+            }
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        .logo-text strong {
+            font-size: 1.15rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #fff 40%, var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-text span {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .header-badge {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(0, 206, 201, 0.1);
+            border: 1px solid rgba(0, 206, 201, 0.25);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .header-badge .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--secondary);
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.2;
+            }
+        }
+
+        /* ── Hero ── */
+        .hero {
+            text-align: center;
+            padding: 64px 0 52px;
+            animation: fadeInUp 0.8s ease 0.1s both;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(108, 92, 231, 0.12);
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #a29bfe;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.2rem, 6vw, 3.6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 18px;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 .line-1 {
+            display: block;
+            color: #fff;
+        }
+
+        .hero h1 .line-2 {
+            display: block;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            background-size: 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .hero p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 480px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* ── Tools Grid ── */
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInUp 0.7s ease 0.2s both;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 60px;
+        }
+
+        /* ── Tool Card ── */
+        .tool-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: var(--border);
+            border-radius: 22px;
+            padding: 30px 24px 26px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            position: relative;
+            overflow: hidden;
+            transition:
+                transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+            animation: cardEntrance 0.6s ease both;
+        }
+
+        .tool-card:nth-child(1) {
+            animation-delay: 0.15s;
+        }
+
+        .tool-card:nth-child(2) {
+            animation-delay: 0.25s;
+        }
+
+        .tool-card:nth-child(3) {
+            animation-delay: 0.35s;
+        }
+
+        .tool-card:nth-child(4) {
+            animation-delay: 0.45s;
+        }
+
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Shimmer sweep */
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent 20%, rgba(255, 255, 255, 0.055) 50%, transparent 80%);
+            transform: translateX(-100%);
+            transition: transform 0.55s ease;
+            pointer-events: none;
+        }
+
+        .tool-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        /* Top accent line */
+        .tool-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tool-card:hover::after {
+            opacity: 1;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-7px) scale(1.02);
+            border-color: rgba(108, 92, 231, 0.4);
+            box-shadow: 0 20px 50px -15px var(--primary-glow), 0 0 0 1px rgba(108, 92, 231, 0.15);
+        }
+
+        .tool-card:active {
+            transform: translateY(-2px) scale(0.99);
+        }
+
+        /* Live card special treatment */
+        .tool-card.live {
+            background: linear-gradient(145deg, rgba(108, 92, 231, 0.15), rgba(0, 206, 201, 0.07));
+            border-color: rgba(108, 92, 231, 0.35);
+            animation: cardEntrance 0.6s ease 0.15s both, liveCardPulse 4s ease-in-out 1s infinite;
+        }
+
+        @keyframes liveCardPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(108, 92, 231, 0);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(108, 92, 231, 0.25), 0 0 60px rgba(0, 206, 201, 0.08);
+            }
+        }
+
+        .tool-card.live:hover {
+            box-shadow: 0 20px 60px -10px var(--primary-glow), 0 0 0 1px rgba(108, 92, 231, 0.4);
+            animation: none;
+        }
+
+        /* Card icon */
+        .card-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .card-icon.purple {
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.3), rgba(142, 123, 248, 0.2));
+            border: 1px solid rgba(108, 92, 231, 0.4);
+            box-shadow: 0 0 20px rgba(108, 92, 231, 0.2);
+        }
+
+        .card-icon.teal {
+            background: linear-gradient(135deg, rgba(0, 206, 201, 0.2), rgba(0, 206, 201, 0.1));
+            border: 1px solid rgba(0, 206, 201, 0.3);
+        }
+
+        .card-icon.pink {
+            background: linear-gradient(135deg, rgba(224, 86, 253, 0.2), rgba(224, 86, 253, 0.1));
+            border: 1px solid rgba(224, 86, 253, 0.3);
+        }
+
+        .card-icon.orange {
+            background: linear-gradient(135deg, rgba(253, 203, 110, 0.2), rgba(253, 203, 110, 0.1));
+            border: 1px solid rgba(253, 203, 110, 0.3);
+        }
+
+        .tool-card:hover .card-icon {
+            transform: rotate(8deg) scale(1.12);
+            box-shadow: 0 8px 24px rgba(108, 92, 231, 0.35);
+        }
+
+        .card-body {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            margin-bottom: 6px;
+            background: linear-gradient(90deg, #fff, #c8d6e5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 4px;
+        }
+
+        .card-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .badge-live {
+            background: rgba(0, 184, 148, 0.15);
+            border: 1px solid rgba(0, 184, 148, 0.35);
+            color: var(--success);
+        }
+
+        .badge-soon {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+        }
+
+        .card-arrow {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(108, 92, 231, 0.15);
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            color: var(--primary);
+            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .tool-card:hover .card-arrow {
+            background: var(--primary);
+            color: #fff;
+            transform: translateX(3px);
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+
+        /* ── Coming Soon / Grayed Cards ── */
+        .tool-card.coming-soon {
+            opacity: 0.5;
+            filter: grayscale(70%);
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .tool-card.coming-soon:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Tooltip on coming-soon hover — re-enable pointer events for tooltip only */
+        .tool-card.coming-soon {
+            pointer-events: auto;
+            cursor: not-allowed;
+        }
+
+        .coming-soon-overlay {
+            position: absolute;
+            inset: 0;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            background: rgba(10, 10, 16, 0.82);
+            backdrop-filter: blur(4px);
+            transition: opacity 0.25s ease;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .tool-card.coming-soon:hover .coming-soon-overlay {
+            opacity: 1;
+        }
+
+        .tool-card.coming-soon:hover {
+            transform: none !important;
+            box-shadow: none !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .coming-soon-overlay i {
+            font-size: 1.6rem;
+            color: #f39c12;
+        }
+
+        .coming-soon-overlay span {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #f39c12;
+            letter-spacing: 0.5px;
+        }
+
+        .coming-soon-overlay small {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        /* ── Footer ── */
+        footer {
+            margin-top: auto;
+            padding: 28px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.7s ease 0.5s both;
+        }
+
+        .footer-left {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .footer-left a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s, text-shadow 0.2s;
+        }
+
+        .footer-left a:hover {
+            color: #fff;
+            text-shadow: 0 0 10px var(--secondary);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-links a:hover {
+            color: var(--text);
+        }
+
+        /* ── Animations ── */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 560px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero {
+                padding: 44px 0 36px;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 14px;
+            }
+
+            footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .tool-card {
+                padding: 24px 20px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Animated Background -->
+    <div class="bg-canvas">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    <div class="bg-grid"></div>
+
+    <div class="page">
+
+        <!-- Header -->
+        <header>
+            <a class="logo" href="/">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-bolt" style="color:#fff;"></i>
+                </div>
+                <div class="logo-text">
+                    <strong>Code Specter</strong>
+                    <span>FREE FIRE HACKS</span>
+                </div>
+            </a>
+            <div class="header-badge">
+                <div class="dot"></div>
+                Tools Online
+            </div>
+        </header>
+
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-eyebrow">
+                <i class="fa-solid fa-fire-flame-curved"></i>
+                Free Fire Premium Tools
+            </div>
+            <h1>
+                <span class="line-1">Your Ultimate</span>
+                <span class="line-2">FF Control Hub</span>
+            </h1>
+            <p>Premium tools to control bots, perform emotes, check bans, generate banners, manage JWT tokens, update
+                bios, view outfits, send visits, and fetch player info — all in one place.</p>
+        </section>
+
+        <!-- Tools Grid -->
+        <div class="section-label">
+            <i class="fa-solid fa-grid-2" style="color:var(--primary);"></i>
+            Available Tools
+        </div>
+
+        <div class="tools-grid" id="tools-grid">
+
+            <!-- Card 1: TCP Emote — LIVE -->
+            <a class="tool-card" href="emote" data-tool="tcp-emote">
+                <div class="card-icon purple">
+                    <i class="fa-solid fa-wand-magic-sparkles" style="color:#a29bfe;"></i>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">TCP Emote</div>
+                    <div class="card-desc">Control emotes in real-time, invite bots, join teams and force leave — all
+                        via TCP.</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge badge-live">● Live</span>
+                    <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </a>
+
+            <!-- Card 2: Ban Check -->
+            <a class="tool-card" href="bancheck" data-tool="ban-check">
+                <div class="card-icon teal">
+                    <i class="fa-solid fa-ban" style="color:#00cec9;"></i>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Ban Check</div>
+                    <div class="card-desc">Check if any Free Fire UID is currently banned with instant results.</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge badge-live">● Live</span>
+                    <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </a>
+
+            <!-- Card 3: Banner Image -->
+            <a class="tool-card" href="banner" data-tool="banner">
+                <div class="card-icon pink">
+                    <i class="fa-solid fa-image" style="color:#e056fd;"></i>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Banner Image</div>
+                    <div class="card-desc">Generate stunning profile banner images with avatar, guild name, and level.
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge badge-live">● Live</span>
+                    <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </a>
+
+            <!-- Card 4: JWT Token -->
+            <a class="tool-card" href="jwt" data-tool="jwt-token">
+                <div class="card-icon orange">
+                    <i class="fa-solid fa-key" style="color:#fdcb6e;"></i>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">JWT Token</div>
+                    <div class="card-desc">Generate & decode Free Fire JWT login tokens from Garena credentials.</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge badge-live">● Live</span>
+                    <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </a>
+
+            <!-- Card 5: Bio Update -->
+            <a class="tool-card" href="bio" data-tool="bio-update">
+                <div class="card-icon purple">
+                    <i class="fa-solid fa-pen-to-square" style="color:#a29bfe;"></i>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Long Bio Update</div>
+                    <div class="card-desc">Update any Free Fire account's profile bio with custom text up to 256 chars.
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge badge-live">● Live</span>
+                    <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </a>
+
+            <!-- Card 6: Outfit Image -->
+            <a class="tool-card" href="outfit" data-tool="outfit">
+                <div class="card-icon teal">
+                    <i class="fa-solid fa-shirt" style="color:#00cec9;"></i>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Outfit Image</div>
+                    <div class="card-desc">View a player's equipped outfit items rendered on a beautiful card.</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge badge-live">● Live</span>
+                    <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </a>
+
+            <!-- Card 7: Visit Sender -->
+            <a class="tool-card" href="visit" data-tool="visit">
+                <div class="card-icon pink">
+                    <i class="fa-solid fa-eye" style="color:#e056fd;"></i>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Visit Spam</div>
+                    <div class="card-desc">Send mass profile visits to any player using all available tokens.</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge badge-live">● Live</span>
+                    <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </a>
+
+            <!-- Card 8: Player Info -->
+            <a class="tool-card" href="info" data-tool="player-info">
+                <div class="card-icon orange">
+                    <i class="fa-solid fa-chart-simple" style="color:#fdcb6e;"></i>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Player Info</div>
+                    <div class="card-desc">Get full account information with auto region-detect and guild details.</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge badge-live">● Live</span>
+                    <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </a>
+
+            <!-- Card 9: Player Info v2 -->
+            <a class="tool-card" href="infov2" data-tool="info-v2">
+                <div class="card-icon purple">
+                    <i class="fa-solid fa-chart-line" style="color:#a29bfe;"></i>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Player Info/stats/search</div>
+                    <div class="card-desc">Detailed player show, BR/CS stats, and player name search.</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge badge-live">● Live</span>
+                    <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </a>
+
+            <!-- Card 10: Like Bot — Coming Soon -->
+            <div class="tool-card coming-soon" data-tool="like-bot">
+                <div class="coming-soon-overlay">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>Coming Soon</span>
+                    <small>Stay tuned for updates</small>
+                </div>
+                <div class="card-icon teal">
+                    <i class="fa-solid fa-shield-halved" style="color:#00cec9;"></i>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Like Bot</div>
+                    <div class="card-desc">Advanced account management and protection utilities for Free Fire.</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge badge-soon">Coming Soon</span>
+                    <div class="card-arrow"><i class="fa-solid fa-lock"></i></div>
+                </div>
+            </div>
+
+            <!-- Card 11: Free Panel — Coming Soon -->
+            <div class="tool-card coming-soon" data-tool="free-panel">
+                <div class="coming-soon-overlay">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>Coming Soon</span>
+                    <small>Stay tuned for updates</small>
+                </div>
+                <div class="card-icon pink">
+                    <i class="fa-solid fa-chart-line" style="color:#e056fd;"></i>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Free Panel</div>
+                    <div class="card-desc">Track player stats, match history, and performance analytics in real-time.
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge badge-soon">Coming Soon</span>
+                    <div class="card-arrow"><i class="fa-solid fa-lock"></i></div>
+                </div>
+            </div>
+
+            <!-- Card 12: Bypass Tools — Coming Soon -->
+            <div class="tool-card coming-soon" data-tool="bypass">
+                <div class="coming-soon-overlay">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>Coming Soon</span>
+                    <small>Stay tuned for updates</small>
+                </div>
+                <div class="card-icon orange">
+                    <i class="fa-solid fa-screwdriver-wrench" style="color:#fdcb6e;"></i>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">Bypass Tools</div>
+                    <div class="card-desc">Essential bypass utilities and hacker tools for advanced Free Fire
+                        operations.</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge badge-soon">Coming Soon</span>
+                    <div class="card-arrow"><i class="fa-solid fa-lock"></i></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-left">
+                &copy; 2026 All rights reserved &mdash;
+                <a href="https://www.codespecters.com/" target="_blank">CODE SPECTER</a>
+            </div>
+            <div class="footer-links">
+                <a href="https://discord.gg/codespecters" target="_blank">
+                    <i class="fa-brands fa-discord"></i> Discord
+                </a>
+                <a href="/">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> TCP Emote
+                </a>
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('tools-grid');
+            const cards = Array.from(grid.querySelectorAll('.tool-card'));
+
+            // 1. Update cards state based on config
+            cards.forEach(card => {
+                const toolId = card.getAttribute('data-tool');
+                const isSoon = COMING_SOON[toolId];
+
+                if (isSoon) {
+                    card.classList.add('coming-soon');
+                    // If it was a link, make it a div to prevent clicking
+                    if (card.tagName === 'A') {
+                        const div = document.createElement('div');
+                        div.className = card.className;
+                        div.innerHTML = card.innerHTML;
+                        for (let attr of card.attributes) {
+                            if (attr.name !== 'href') div.setAttribute(attr.name, attr.value);
+                        }
+
+                        // Add overlay if missing
+                        if (!div.querySelector('.coming-soon-overlay')) {
+                            const overlay = document.createElement('div');
+                            overlay.className = 'coming-soon-overlay';
+                            overlay.innerHTML = '<i class="fa-solid fa-clock"></i><span>Coming Soon</span><small>Stay tuned for updates</small>';
+                            div.insertBefore(overlay, div.firstChild);
+                        }
+
+                        // Update badge and arrow
+                        const badge = div.querySelector('.card-badge');
+                        if (badge) {
+                            badge.className = 'card-badge badge-soon';
+                            badge.textContent = 'Coming Soon';
+                        }
+                        const arrow = div.querySelector('.card-arrow i');
+                        if (arrow) {
+                            arrow.className = 'fa-solid fa-lock';
+                        }
+
+                        card.parentNode.replaceChild(div, card);
+                    }
+                } else {
+                    card.classList.remove('coming-soon');
+                    const overlay = card.querySelector('.coming-soon-overlay');
+                    if (overlay) overlay.remove();
+
+                    // Update badge and arrow if they were set to coming soon
+                    const badge = card.querySelector('.card-badge');
+                    if (badge && badge.classList.contains('badge-soon')) {
+                        badge.className = 'card-badge badge-live';
+                        badge.textContent = '● Live';
+                    }
+                    const arrow = card.querySelector('.card-arrow i');
+                    if (arrow && arrow.classList.contains('fa-lock')) {
+                        arrow.className = 'fa-solid fa-arrow-right';
+                    }
+                }
+            });
+
+            // 2. Sort cards: Live first, Coming Soon last
+            // Refresh cards list since some might have changed from A to DIV
+            const updatedCards = Array.from(grid.querySelectorAll('.tool-card'));
+            updatedCards.sort((a, b) => {
+                const aSoon = a.classList.contains('coming-soon');
+                const bSoon = b.classList.contains('coming-soon');
+                if (aSoon && !bSoon) return 1;
+                if (!aSoon && bSoon) return -1;
+                return 0;
+            });
+
+            // Re-append in sorted order
+            updatedCards.forEach(card => grid.appendChild(card));
+        });
+    </script>
+</body>
+
+</html>
